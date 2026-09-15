@@ -1,0 +1,28 @@
+name: Kubernetes Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Kubernetes
+        run: kubectl cluster-info
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
+
+      - name: Check deployment
+        run: |
+          kubectl rollout status deployment/my-app
+          kubectl get pods
+          kubectl get services
